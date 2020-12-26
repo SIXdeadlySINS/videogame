@@ -1,0 +1,47 @@
+ 
+taamel fichier tsamih modifierModulemtaaak.php
+<?PHP
+include_once "../../entities/evenement.php";
+include_once "../../core/evenementC.php";
+session_start();
+if(isset($_POST['modifier']))
+{
+$evenement=new Evenement($_POST['nom'],$_POST['img'],$_POST['date_debut'],$_POST['date_fin'],$_POST['descrip']);
+$evenementC= new EvenementC();
+$evenementC->modifierEvenement($evenement,$_POST['id_ini']);
+header('Location: events_list.php');
+}	
+	
+?> 
+
+w hedhiel fonction :  
+
+    function modifierEvenement($evenement,$id){
+        $sql="UPDATE evenement SET img=:img, nom=:nom, date_debut:=date_debut, date_fin:=date_fin, descrip=:descrip  WHERE id=:id";
+        $db = config::getConnexion();
+
+        try{
+            $req=$db->prepare($sql);
+            $img=$evenement->getimg();
+            $nom=$evenement->getnom();  
+            $date_debut=$evenement->getdate_debut();
+            $date_fin=$evenement->getdate_fin();
+            $descrip=$evenement->getdescrip();
+
+
+            $datas = array(':id'=>$id,':img'=>$img, ':nom'=>$nom ,':date_debut'=>$date_debut,
+            ':date_fin'=>$date_fin,':descrip'=>$descrip);
+            $req->bindValue(':id',$id);
+            $req->bindValue(':img',$img);
+            $req->bindValue(':nom',$nom);
+            $req->bindValue(':date_debut',$date_debut);
+            $req->bindValue(':date_fin',$date_fin);
+            $req->bindValue(':descrip',$descrip);
+
+            $s=$req->execute();
+        }catch(Exception $e){
+            echo "Erreur : ".$e->getMessage();
+            echo "Les Datas : " ;
+            print_r($datas);
+        }
+    }  
